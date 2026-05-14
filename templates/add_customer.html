@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Thêm khách hàng{% endblock %}
+{% block page_title %}Thêm khách hàng mới{% endblock %}
+{% block content %}
+<div style="max-width:680px;">
+  <div class="card">
+    <div class="card-header">
+      <h3><i class="fa-solid fa-user-plus" style="color:#1a56db;margin-right:8px;"></i>Thông tin khách hàng</h3>
+    </div>
+    <div class="card-body">
+      <form method="POST">
+        <div class="form-grid mb-4">
+          <div class="form-group full">
+            <label>Họ và tên *</label>
+            <input type="text" name="fullname" placeholder="Nguyễn Văn A" required>
+          </div>
+          <div class="form-group">
+            <label>Ngày sinh</label>
+            <input type="date" name="dob">
+          </div>
+          <div class="form-group">
+            <label>Số CCCD *</label>
+            <input type="text" name="nationalid" placeholder="001090012345" required>
+          </div>
+          <div class="form-group">
+            <label>Số điện thoại *</label>
+            <input type="text" name="phone" placeholder="0901234567" required>
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" placeholder="example@gmail.com">
+          </div>
+          <div class="form-group full">
+            <label>Địa chỉ</label>
+            <input type="text" name="address" placeholder="Số nhà, đường, quận, thành phố">
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Lưu khách hàng</button>
+          <a href="{{ url_for('customers') }}" class="btn btn-outline">Hủy</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

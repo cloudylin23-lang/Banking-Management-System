@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block title %}Tạo giao dịch — NEU Bank{% endblock %}
+{% block page_title %}Tạo giao dịch mới{% endblock %}
+{% block extra_css %}
+<style>
+.txn-type-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px; }
+.txn-type-btn { border:2px solid #e5e7eb; border-radius:12px; padding:16px; text-align:center; cursor:pointer; transition:all .15s; }
+.txn-type-btn.deposit:hover, .txn-type-btn.deposit.selected { border-color:#057a55; background:#def7ec; }
+.txn-type-btn.withdrawal:hover, .txn-type-btn.withdrawal.selected { border-color:#c81e1e; background:#fde8e8; }
+.txn-type-btn.transfer:hover, .txn-type-btn.transfer.selected { border-color:#1a56db; background:#ebf5ff; }
+.txn-type-btn .icon { font-size:24px; margin-bottom:8px; }
+.txn-type-btn .label { font-size:14px; font-weight:600; }
+.balance-info { background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; padding:12px 16px; font-size:14px; margin-top:8px; display:none; }
+</style>
+{% endblock %}
+{% block content %}
+<div style="max-width:600px;">
+  <div class="card">
+    <div class="card-header">
+      <h3><i class="fa-solid fa-money-bill-transfer" style="color:#1a56db;margin-right:8px;"></i>Thông tin giao dịch</h3>
+    </div>
+    <div class="card-body">
+      <form method="POST" id="txnForm">
+
+        <label style="display:block;font-size:13px;font-weight:500;color:#374151;margin-bottom:10px;">Loại giao dịch *</label>
+        <div class="txn-type-grid">
+          <div class="txn-type-btn deposit" onclick="selectType('Deposit',this)">
+            <div class="icon" style="color:#057a55;">💰</div>
+            <div class="label" style="color:#057a55;">Nạp tiền</div>
+          </div>
+          <div class="txn-type-btn withdrawal" onclick="selectType('Withdrawal',this)">
+            <div class="icon" style="color:#c81e1e;">💸</div>
+            <div class="label" style="color:#c81e1e;">Rút tiền</div>
+          </div>
+          <div class="txn-type-btn transfer" onclick="selectType('Transfer',this)">
+            <div class="icon" style="color:#1a56db;">🔄</div>
+            <div class="label" style="color:#1a56db;">Chuyển khoản</div>
+          </div>
+        </div>
+        <input type="hidden" name="txn_type" id="txn_type" required>
+
+        <div class="form-group mb-4">
+          <label>Tài khoản nguồn *</label>
+          <select name="account_id" id="account_id" required onchange="showBalance(this)">
+            <option value="">-- Chọn tài khoản --</option>
+            {% for a in accounts %}
+            <option value="{{ a.AccountID }}" data-balance="{{ a.Balance }}">
+              #{{ a.AccountID }} — {{ a.FullName }} ({{ "{:,.0f}".format(a.Balance) }} VND)
+            </option>
+            {% endfor %}
+          </select>
+          <div class="balance-info" id="balanceInfo">
+            Số dư hiện tại: <strong id="balanceDisplay"></strong>
+          </div>
+        </div>
+
+        <div class="form-group mb-4" id="toAccountGroup" style="display:none;">
+          <label>Tài khoản đích *</label>
+          <select name="to_account_id" id="to_account_id">
+            <option value="">-- Chọn tài khoản nhận --</option>
+            {% for a in accounts %}
+            <option value="{{ a.AccountID }}">#{{ a.AccountID }} — {{ a.FullName }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group mb-4">
+          <label>Số tiền (VND) *</label>
+          <input type="number" name="amount" id="amount" min="1000" step="1000" placeholder="Nhập số tiền..." required oninput="formatAmt(this)">
+          <small style="color:#6b7280;font-size:12px;" id="amtDisplay"></small>
+        </div>
+
+        <div class="form-group mb-4">
+          <label>Mô tả</label>
+          <input type="text" name="description" placeholder="Ghi chú giao dịch...">
+        </div>
+
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-primary" type="submit" id="submitBtn" disabled>
+            <i class="fa-solid fa-paper-plane"></i> Thực hiện giao dịch
+          </button>
+          <a href="{{ url_for('transactions') }}" class="btn btn-outline">Hủy</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+function selectType(type, el) {
+  document.querySelectorAll('.txn-type-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('txn_type').value = type;
+  document.getElementById('toAccountGroup').style.display = type === 'Transfer' ? 'flex' : 'none';
+  document.getElementById('toAccountGroup').style.flexDirection = 'column';
+  checkReady();
+}
+function showBalance(sel) {
+  const opt = sel.options[sel.selectedIndex];
+  const bal = opt.dataset.balance;
+  if (bal) {
+    document.getElementById('balanceInfo').style.display = 'block';
+    document.getElementById('balanceDisplay').textContent = Number(bal).toLocaleString('vi-VN') + ' VND';
+  } else {
+    document.getElementById('balanceInfo').style.display = 'none';
+  }
+  checkReady();
+}
+function formatAmt(input) {
+  const v = parseInt(input.value);
+  if (v > 0) {
+    document.getElementById('amtDisplay').textContent = '≈ ' + v.toLocaleString('vi-VN') + ' VND';
+  }
+  checkReady();
+}
+function checkReady() {
+  const t = document.getElementById('txn_type').value;
+  const a = document.getElementById('account_id').value;
+  const m = document.getElementById('amount').value;
+  document.getElementById('submitBtn').disabled = !(t && a && m);
+}
+</script>
+{% endblock %}

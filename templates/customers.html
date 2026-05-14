@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Khách hàng — NEU Bank{% endblock %}
+{% block page_title %}Quản lý khách hàng{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <h3><i class="fa-solid fa-users" style="color:#1a56db;margin-right:8px;"></i>Danh sách khách hàng ({{ customers|length }})</h3>
+    <a href="{{ url_for('add_customer') }}" class="btn btn-primary"><i class="fa-solid fa-user-plus"></i> Thêm khách hàng</a>
+  </div>
+  <div class="card-body">
+    <form class="search-bar" method="GET">
+      <input type="text" name="search" value="{{ search }}" placeholder="Tìm theo tên, SĐT, CCCD...">
+      <button class="btn btn-primary" type="submit"><i class="fa-solid fa-search"></i> Tìm</button>
+      {% if search %}<a href="{{ url_for('customers') }}" class="btn btn-outline">Xóa lọc</a>{% endif %}
+    </form>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>#</th><th>Họ tên</th><th>Số điện thoại</th><th>CCCD</th><th>Địa chỉ</th><th>Số TK</th><th>Ngày tạo</th></tr></thead>
+      <tbody>
+      {% for c in customers %}
+      <tr>
+        <td style="color:#6b7280;">{{ c.CustomerID }}</td>
+        <td><span style="font-weight:600;">{{ c.FullName }}</span><br><small style="color:#6b7280;">{{ c.Email or '' }}</small></td>
+        <td>{{ c.PhoneNumber }}</td>
+        <td style="font-family:monospace;font-size:13px;">{{ c.NationalID }}</td>
+        <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ c.Address or '—' }}</td>
+        <td><span class="badge badge-info">{{ c.num_accounts }} tài khoản</span></td>
+        <td style="color:#6b7280;font-size:13px;">{{ c.CreatedAt.strftime('%d/%m/%Y') if c.CreatedAt else '—' }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" style="text-align:center;color:#6b7280;padding:32px;">Không tìm thấy khách hàng</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard — NEU Bank{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#ebf5ff;color:#1a56db;"><i class="fa-solid fa-users"></i></div>
+    <div class="stat-value">{{ stats.customers }}</div>
+    <div class="stat-label">Khách hàng</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#def7ec;color:#057a55;"><i class="fa-solid fa-wallet"></i></div>
+    <div class="stat-value">{{ stats.accounts }}</div>
+    <div class="stat-label">Tài khoản đang hoạt động</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#fdf6b2;color:#9f580a;"><i class="fa-solid fa-coins"></i></div>
+    <div class="stat-value" style="font-size:18px;">{{ "{:,.0f}".format(stats.total_balance) }}<small style="font-size:13px;font-weight:400;color:#6b7280;"> VND</small></div>
+    <div class="stat-label">Tổng số dư</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#fde8e8;color:#c81e1e;"><i class="fa-solid fa-arrows-rotate"></i></div>
+    <div class="stat-value">{{ stats.today_txn }}</div>
+    <div class="stat-label">Giao dịch hôm nay</div>
+  </div>
+</div>
+
+<div class="grid-2 mb-6">
+  <div class="card">
+    <div class="card-header">
+      <h3><i class="fa-solid fa-chart-pie" style="color:#1a56db;margin-right:8px;"></i>Thống kê giao dịch</h3>
+    </div>
+    <div class="card-body">
+      {% for row in stats.txn_summary %}
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f3f4f6;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          {% if row.TransactionType == 'Deposit' %}
+            <span class="badge badge-success"><i class="fa-solid fa-arrow-down"></i> Nạp tiền</span>
+          {% elif row.TransactionType == 'Withdrawal' %}
+            <span class="badge badge-danger"><i class="fa-solid fa-arrow-up"></i> Rút tiền</span>
+          {% else %}
+            <span class="badge badge-info"><i class="fa-solid fa-arrow-right-arrow-left"></i> Chuyển khoản</span>
+          {% endif %}
+        </div>
+        <div style="text-align:right;">
+          <div style="font-weight:700;font-size:15px;">{{ "{:,.0f}".format(row.total) }} VND</div>
+          <div style="font-size:12px;color:#6b7280;">{{ row.cnt }} giao dịch</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3><i class="fa-solid fa-clock-rotate-left" style="color:#1a56db;margin-right:8px;"></i>Giao dịch gần đây</h3>
+      <a href="{{ url_for('transactions') }}" class="btn btn-outline" style="font-size:12px;padding:5px 12px;">Xem tất cả</a>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Khách hàng</th><th>Loại</th><th>Số tiền</th></tr></thead>
+        <tbody>
+        {% for t in stats.recent %}
+        <tr>
+          <td>{{ t.FullName }}</td>
+          <td>
+            {% if t.TransactionType == 'Deposit' %}<span class="badge badge-success">Nạp</span>
+            {% elif t.TransactionType == 'Withdrawal' %}<span class="badge badge-danger">Rút</span>
+            {% else %}<span class="badge badge-info">Chuyển</span>{% endif %}
+          </td>
+          <td class="fw-bold">{{ "{:,.0f}".format(t.Amount) }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h3><i class="fa-solid fa-bolt" style="color:#1a56db;margin-right:8px;"></i>Thao tác nhanh</h3>
+  </div>
+  <div class="card-body" style="display:flex;gap:12px;flex-wrap:wrap;">
+    <a href="{{ url_for('new_transaction') }}" class="btn btn-primary"><i class="fa-solid fa-money-bill-transfer"></i> Tạo giao dịch mới</a>
+    <a href="{{ url_for('add_customer') }}" class="btn btn-success"><i class="fa-solid fa-user-plus"></i> Thêm khách hàng</a>
+    <a href="{{ url_for('reports') }}" class="btn btn-outline"><i class="fa-solid fa-chart-bar"></i> Xem báo cáo</a>
+    <a href="{{ url_for('transactions') }}" class="btn btn-outline"><i class="fa-solid fa-list"></i> Lịch sử giao dịch</a>
+  </div>
+</div>
+{% endblock %}
