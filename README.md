@@ -265,7 +265,7 @@ banking-management-system/
 
 | Name | Student ID | Role |
 |---|---|---|
-| [Your Name] | [Student ID] | Developer |
+| [Đinh Nguyễn Anh Thư] | [11245936] | Developer |
 
 **Instructor:** MSc. Hung Tran · hung.tran@neu.edu.vn
 **Institution:** National Economics University — DATCOM Lab
@@ -284,7 +284,7 @@ banking-management-system/
 
 ## 📹 Demo
 
-▶️ [Watch full demo on YouTube](https://youtu.be/e2ybr-8e7bU)
+▶️ [Watch full demo on YouTube](https://youtu.be/RiPMoh3loL4)
 
 ---
 
